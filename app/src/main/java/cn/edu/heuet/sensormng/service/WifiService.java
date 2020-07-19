@@ -1,5 +1,15 @@
 package cn.edu.heuet.sensormng.service;
 
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.IBinder;
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,20 +18,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 import cn.edu.heuet.sensormng.FileUtils;
 import cn.edu.heuet.sensormng.StringUtils;
-
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.os.IBinder;
-import android.util.Log;
 
 public class WifiService extends Service {
     private String TAG = "WIFIService";
@@ -78,13 +76,19 @@ public class WifiService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
+//        if (timer != null) {
+//            timer.cancel();
+//            timer = null;
+//        }
     }
 
     @Override

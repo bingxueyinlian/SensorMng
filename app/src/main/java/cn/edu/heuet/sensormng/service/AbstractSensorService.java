@@ -44,10 +44,16 @@ public abstract class AbstractSensorService extends Service implements
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this, mSensor);
-        }
+//        if (mSensorManager != null) {
+//            mSensorManager.unregisterListener(this, mSensor);
+//        }
         super.onDestroy();
     }
 

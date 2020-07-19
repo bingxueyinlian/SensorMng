@@ -65,12 +65,18 @@ public class GSMService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
+//        if (timer != null) {
+//            timer.cancel();
+//            timer = null;
+//        }
     }
 
     private void getLocationData() {

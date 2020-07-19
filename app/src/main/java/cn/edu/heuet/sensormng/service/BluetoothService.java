@@ -88,17 +88,23 @@ public class BluetoothService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter.cancelDiscovery();
-            mBluetoothAdapter = null;
-        }
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
+//        if (mBluetoothAdapter != null) {
+//            mBluetoothAdapter.cancelDiscovery();
+//            mBluetoothAdapter = null;
+//        }
+//        unregisterReceiver(mReceiver);
+//        if (timer != null) {
+//            timer.cancel();
+//            timer = null;
+//        }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND

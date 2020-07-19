@@ -16,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,12 +92,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         permissionTask();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void initData() {
         FillListView();
         setServiceRunningStatus();
         listView.setAdapter(myAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setServiceRunningStatus();
     }
 
     private void FillListView() {
@@ -156,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void updateRunningStatus(String serviceClassName) {
+        if (myAdapter == null) return;
         serviceClassName = serviceClassName.replace("Service", "").toLowerCase(Locale.getDefault());
         for (int i = 0; i < myAdapter.getCount(); i++) {
             Map<String, Object> map = myAdapter.getItem(i);
@@ -170,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private boolean setItemStatus(int position, boolean isStart) {
+        if (myAdapter == null) return false;
         Map<String, Object> map = myAdapter.getItem(position);
         int sensorType = MapUtils.getIntValue(map, "SensorType");
         return changeService(sensorType, isStart);
@@ -370,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, perms)) {
             // Already have permission, do the thing
             // ...
+            initData();
         } else {
             // Do not have permissions, request them now
             EasyPermissions.requestPermissions(this,
@@ -386,6 +394,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onRationaleDenied(int requestCode) {
         Log.d(TAG, "onRationaleDenied:" + requestCode);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent home = new Intent(Intent.ACTION_MAIN);
+            home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            home.addCategory(Intent.CATEGORY_HOME);
+            startActivity(home);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private class MyAdapter extends BaseAdapter {

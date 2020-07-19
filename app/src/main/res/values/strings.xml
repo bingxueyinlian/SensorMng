@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">数据采集</string>
+    <string name="app_name_title">传感器列表</string>
+    <string name="On">On</string>
+    <string name="Off">Off</string>
+    <string name="permission_request">本应用需要申请以下权限，请您允许.</string>
+</resources>

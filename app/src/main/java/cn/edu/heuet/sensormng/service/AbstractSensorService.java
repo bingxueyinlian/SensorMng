@@ -58,7 +58,7 @@ public abstract class AbstractSensorService extends Service implements
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         float[] values = event.values;
         for (int i = 0; i < values.length; i++) {
             float v = values[i];

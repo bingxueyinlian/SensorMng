@@ -80,9 +80,7 @@ public class WifiService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
-        }
+        unregisterReceiver(mReceiver);
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -105,7 +103,7 @@ public class WifiService extends Service {
                 if (resultList != null && resultList.size() > 0) {
                     String time = new SimpleDateFormat("yyyyMMddHHmmss,SSS",
                             Locale.getDefault()).format(new Date());
-                    StringBuffer sbResult = new StringBuffer();
+                    StringBuilder sbResult = new StringBuilder();
                     for (ScanResult sr : resultList) {
 
                         boolean isExist = checkExist(sr.BSSID);
@@ -161,9 +159,7 @@ public class WifiService extends Service {
             String level = scanResult.level + "";
             String frequency = scanResult.frequency + "";
             String timestamp = "";
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {//17
-                timestamp = scanResult.timestamp + "";
-            }
+            timestamp = scanResult.timestamp + "";
             ArrayList<String> dataList = new ArrayList<String>();
             dataList.add(ssid);
             dataList.add(bssid);

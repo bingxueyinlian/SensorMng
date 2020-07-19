@@ -1,13 +1,5 @@
 package cn.edu.heuet.sensormng.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -16,9 +8,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
 import cn.edu.heuet.sensormng.StringUtils;
@@ -96,9 +94,7 @@ public class BluetoothService extends Service {
             mBluetoothAdapter.cancelDiscovery();
             mBluetoothAdapter = null;
         }
-        if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
-        }
+        unregisterReceiver(mReceiver);
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -166,9 +162,9 @@ public class BluetoothService extends Service {
                     .equals(action)) {
                 Log.i(TAG, "ACTION_DISCOVERY_FINISHED");
                 if (arrDevices != null && arrDevices.size() > 0) {
-                    StringBuffer sbDevices = new StringBuffer();
+                    StringBuilder sbDevices = new StringBuilder();
                     for (String item : arrDevices) {
-                        sbDevices.append(item + "," + scanID + "\r\n");
+                        sbDevices.append(item).append(",").append(scanID).append("\r\n");
                     }
                     String data = sbDevices.toString();
                     fileUtils.append(data);

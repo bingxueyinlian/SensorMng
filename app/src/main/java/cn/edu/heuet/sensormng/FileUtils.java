@@ -10,13 +10,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class FileUtils {
     private final String TAG = "FileUtils";
-    private final String Encoding = "UTF-8";
     private String rootDirName = "SensorMng";
     private String configFileName = "config.txt";
     private String dirName = null;
@@ -62,10 +62,8 @@ public class FileUtils {
 
     /**
      * 创建目录
-     *
-     * @throws Exception
      */
-    private File createSDDir(String dir) throws Exception {
+    private File createSDDir(String dir) {
         File file = new File(dir);
         if (!file.exists()) {
             boolean success = file.mkdirs();
@@ -100,7 +98,7 @@ public class FileUtils {
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(this.fileName,
-                    true), Encoding);
+                    true), StandardCharsets.UTF_8);
             writer.write(msg);
         } catch (Exception e) {
             Log.i(TAG, "appendLine write==>" + e);
@@ -123,8 +121,7 @@ public class FileUtils {
         if (!file.exists()) {
             OutputStreamWriter writer = null;
             try {
-                writer = new OutputStreamWriter(new FileOutputStream(file),
-                        Encoding);
+                writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
                 writer.write(defaultConfig);
             } catch (Exception e) {
                 Log.i(TAG, "SaveDefaultConfig write==>" + e);
@@ -154,8 +151,7 @@ public class FileUtils {
         }
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(
-                    file), Encoding));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith(tagName)) {

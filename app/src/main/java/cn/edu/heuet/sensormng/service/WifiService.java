@@ -85,10 +85,10 @@ public class WifiService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-//        if (timer != null) {
-//            timer.cancel();
-//            timer = null;
-//        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     @Override

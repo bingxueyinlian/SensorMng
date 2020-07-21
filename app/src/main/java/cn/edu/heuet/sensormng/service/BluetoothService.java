@@ -96,15 +96,15 @@ public class BluetoothService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (mBluetoothAdapter != null) {
-//            mBluetoothAdapter.cancelDiscovery();
-//            mBluetoothAdapter = null;
-//        }
-//        unregisterReceiver(mReceiver);
-//        if (timer != null) {
-//            timer.cancel();
-//            timer = null;
-//        }
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+            mBluetoothAdapter = null;
+        }
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND

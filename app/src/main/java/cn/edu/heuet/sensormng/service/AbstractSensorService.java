@@ -51,9 +51,9 @@ public abstract class AbstractSensorService extends Service implements
 
     @Override
     public void onDestroy() {
-//        if (mSensorManager != null) {
-//            mSensorManager.unregisterListener(this, mSensor);
-//        }
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this, mSensor);
+        }
         super.onDestroy();
     }
 

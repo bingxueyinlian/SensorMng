@@ -73,10 +73,10 @@ public class GSMService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (timer != null) {
-//            timer.cancel();
-//            timer = null;
-//        }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
     private void getLocationData() {

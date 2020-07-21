@@ -72,9 +72,9 @@ public class GPSService extends Service implements LocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (mLocationManager != null) {
-//            mLocationManager.removeUpdates(this);
-//        }
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
     }
 
     private void UpdateLocation(Location location) {

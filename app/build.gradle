@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 28 //安装10无法对wifi进行开关
         versionCode 1
-        versionName "1.2020.0719"
+        versionName "1.2020.0721"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

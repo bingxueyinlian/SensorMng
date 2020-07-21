@@ -38,6 +38,7 @@ public class BluetoothService extends JobIntentService {
     private int cnt = 0;
     private String scanID = "";
     private ArrayList<String> arrDevices = null;
+    private long count = 0;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, BluetoothService.class, MyConstants.JOB_ID_BLUETOOTH, work);
@@ -57,7 +58,24 @@ public class BluetoothService extends JobIntentService {
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mReceiver, filter);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+            mBluetoothAdapter = null;
+        }
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         // delay:1,period:30
         String config = fileUtils.getConfigInfo("bluetooth", "delay,period");
         String[] tempArr = config.split(",");
@@ -87,11 +105,15 @@ public class BluetoothService extends JobIntentService {
                 }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
-    }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
-
+        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND

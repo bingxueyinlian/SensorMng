@@ -32,7 +32,8 @@ public class WifiService extends JobIntentService {
     private Timer timer = null;
     private int cnt = 0;
     private String scanID = "";
-    List<String> scanedList = null;
+    private List<String> scanedList = null;
+    private long count = 0;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, WifiService.class, MyConstants.JOB_ID_WIFI, work);
@@ -47,7 +48,20 @@ public class WifiService extends JobIntentService {
         IntentFilter filter = new IntentFilter(
                 WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(mReceiver, filter);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         // delay:1,period:30
         String config = fileUtils.getConfigInfo("wifi", "delay,period");
         String[] tempArr = config.split(",");
@@ -61,7 +75,6 @@ public class WifiService extends JobIntentService {
         }
         timer = new Timer();
         timer.schedule(new TimerTask() {
-
             @Override
             public void run() {
                 cnt++;
@@ -76,10 +89,15 @@ public class WifiService extends JobIntentService {
                 wifiManager.startScan();
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
-    }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
+        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {

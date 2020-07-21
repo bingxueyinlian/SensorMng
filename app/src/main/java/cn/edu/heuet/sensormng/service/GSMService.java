@@ -32,6 +32,7 @@ public class GSMService extends JobIntentService {
     private TelephonyManager telMng = null;
     private Timer timer = null;
     private int lastSignal = 0;
+    private long count = 0;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, GSMService.class, MyConstants.JOB_ID_GSM, work);
@@ -43,6 +44,19 @@ public class GSMService extends JobIntentService {
         fileUtils = new FileUtils(dirName, fileName);
         telMng = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         telMng.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         // delay:1,period:5
         String config = fileUtils.getConfigInfo("gsm", "delay,period");
         String[] tempArr = config.split(",");
@@ -61,11 +75,15 @@ public class GSMService extends JobIntentService {
                 getLocationData();
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
-    }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
-
+        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void getLocationData() {

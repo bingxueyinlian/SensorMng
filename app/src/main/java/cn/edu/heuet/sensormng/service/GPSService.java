@@ -28,6 +28,7 @@ public class GPSService extends JobIntentService implements LocationListener {
     private final String fileName = "gps";
     private FileUtils fileUtils = null;
     private LocationManager mLocationManager = null;
+    private long count = 0;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, GPSService.class, MyConstants.JOB_ID_GPS, work);
@@ -60,8 +61,23 @@ public class GPSService extends JobIntentService implements LocationListener {
     }
 
     @Override
-    protected void onHandleWork(@NonNull Intent intent) {
+    public void onDestroy() {
+        super.onDestroy();
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
+    }
 
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void UpdateLocation(Location location) {

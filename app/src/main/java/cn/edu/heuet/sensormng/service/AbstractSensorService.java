@@ -27,6 +27,7 @@ public abstract class AbstractSensorService extends JobIntentService implements 
     private FileUtils fileUtils = null;
     private SensorManager mSensorManager = null;
     private Sensor mSensor = null;
+    private long count = 0;
 
     abstract int getSensorType();
 
@@ -44,7 +45,23 @@ public abstract class AbstractSensorService extends JobIntentService implements 
     }
 
     @Override
+    public void onDestroy() {
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this, mSensor);
+        }
+        super.onDestroy();
+    }
+
+    @Override
     protected void onHandleWork(@NonNull Intent intent) {
+        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+            try {
+                Thread.sleep(1000);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

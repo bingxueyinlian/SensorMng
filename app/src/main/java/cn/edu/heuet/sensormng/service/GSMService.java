@@ -41,22 +41,8 @@ public class GSMService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         telMng = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        telMng.listen(new MyPhoneStateListener(),
-                PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        telMng.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
         // delay:1,period:5
         String config = fileUtils.getConfigInfo("gsm", "delay,period");
         String[] tempArr = config.split(",");
@@ -75,6 +61,11 @@ public class GSMService extends JobIntentService {
                 getLocationData();
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+
     }
 
     private void getLocationData() {

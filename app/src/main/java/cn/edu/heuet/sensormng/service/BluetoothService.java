@@ -48,24 +48,7 @@ public class BluetoothService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter.cancelDiscovery();
-            mBluetoothAdapter = null;
-        }
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Register the BroadcastReceiver
@@ -74,7 +57,6 @@ public class BluetoothService extends JobIntentService {
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(mReceiver, filter);
-        // Don't forget to unregister during onDestroy
 
         // delay:1,period:30
         String config = fileUtils.getConfigInfo("bluetooth", "delay,period");
@@ -105,6 +87,11 @@ public class BluetoothService extends JobIntentService {
                 }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND

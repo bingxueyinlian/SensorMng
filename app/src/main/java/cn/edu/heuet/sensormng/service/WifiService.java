@@ -42,26 +42,11 @@ public class WifiService extends JobIntentService {
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         IntentFilter filter = new IntentFilter(
                 WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(mReceiver, filter);
-        // Don't forget to unregister during onDestroy
 
         // delay:1,period:30
         String config = fileUtils.getConfigInfo("wifi", "delay,period");
@@ -91,7 +76,10 @@ public class WifiService extends JobIntentService {
                 wifiManager.startScan();
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
+    }
 
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {

@@ -37,21 +37,14 @@ public abstract class AbstractSensorService extends JobIntentService implements 
         dirName = TAG.replace("Service", "");
         fileName = dirName.toLowerCase(Locale.getDefault());
         fileUtils = new FileUtils(dirName, fileName);
-    }
 
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(getSensorType());
         mSensorManager.registerListener(this, mSensor, m_delay);
     }
 
     @Override
-    public void onDestroy() {
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this, mSensor);
-        }
-        super.onDestroy();
+    protected void onHandleWork(@NonNull Intent intent) {
     }
 
     @Override

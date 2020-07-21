@@ -37,18 +37,6 @@ public class GPSService extends JobIntentService implements LocationListener {
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mLocationManager != null) {
-            mLocationManager.removeUpdates(this);
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         // minTime:30,minDistance:0
         String config = fileUtils.getConfigInfo("gps", "minTime,minDistance");
         String[] tempArr = config.split(",");
@@ -69,6 +57,10 @@ public class GPSService extends JobIntentService implements LocationListener {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 Integer.parseInt(minTime) * 1000,
                 Integer.parseInt(minDistance), this);
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
 
     }
 

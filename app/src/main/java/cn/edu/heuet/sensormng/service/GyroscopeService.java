@@ -1,15 +1,22 @@
 package cn.edu.heuet.sensormng.service;
 
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
+
+import cn.edu.heuet.sensormng.MyConstants;
 
 /**
  * Gyroscope
- * 
  */
 public class GyroscopeService extends AbstractSensorService {
 
-	@Override
-	int getSensorType() {
-		return Sensor.TYPE_GYROSCOPE;
-	}
+    @Override
+    int getSensorType() {
+        return Sensor.TYPE_GYROSCOPE;
+    }
+
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GyroscopeService.class, MyConstants.JOB_ID_GYROSCOPE, work);
+    }
 }

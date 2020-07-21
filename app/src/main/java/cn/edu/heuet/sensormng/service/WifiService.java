@@ -1,14 +1,15 @@
 package cn.edu.heuet.sensormng.service;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.os.IBinder;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,12 +20,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
+import cn.edu.heuet.sensormng.MyConstants;
 import cn.edu.heuet.sensormng.StringUtils;
 
-public class WifiService extends Service {
-    private String TAG = "WIFIService";
+public class WifiService extends JobIntentService {
+    private final String TAG = "WIFIService";
     private final String dirName = "Wifi";
-    private String fileName = "wifi";
+    private final String fileName = "wifi";
     private FileUtils fileUtils = null;
     private WifiManager wifiManager = null;
     private Timer timer = null;
@@ -32,11 +34,28 @@ public class WifiService extends Service {
     private String scanID = "";
     List<String> scanedList = null;
 
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, WifiService.class, MyConstants.JOB_ID_WIFI, work);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-
         fileUtils = new FileUtils(dirName, fileName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         IntentFilter filter = new IntentFilter(
@@ -73,26 +92,6 @@ public class WifiService extends Service {
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
 
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {

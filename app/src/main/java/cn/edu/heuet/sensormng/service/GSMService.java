@@ -1,13 +1,9 @@
 package cn.edu.heuet.sensormng.service;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.Manifest;
-import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.IBinder;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -17,13 +13,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.JobIntentService;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
+import cn.edu.heuet.sensormng.MyConstants;
 
 /**
  * GSM
  */
-public class GSMService extends Service {
+public class GSMService extends JobIntentService {
     private String TAG = "GSMService";
     private final String dirName = "GSM";
     private String fileName = "gsm";
@@ -32,15 +33,27 @@ public class GSMService extends Service {
     private Timer timer = null;
     private int lastSignal = 0;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GSMService.class, MyConstants.JOB_ID_GSM, work);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         telMng = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         telMng.listen(new MyPhoneStateListener(),
                 PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
@@ -62,20 +75,6 @@ public class GSMService extends Service {
                 getLocationData();
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
     }
 
     private void getLocationData() {

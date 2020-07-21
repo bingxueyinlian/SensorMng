@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private boolean changeService(int sensorType, boolean isStart) {
-        Class<?> serviceClass = null;
         switch (sensorType) {
             case TYPE_GPS:
                 if (isStart) {
@@ -199,10 +198,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         return false;
                     }
                 }
-                serviceClass = GPSService.class;
+                GPSService.enqueueWork(this, new Intent());
                 break;
             case TYPE_GSM:
-                serviceClass = GSMService.class;
+                GSMService.enqueueWork(this, new Intent());
                 break;
             case TYPE_BLUETOOTH:
                 if (isStart) {
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         }
                     }
                 }
-                serviceClass = BluetoothService.class;
+                BluetoothService.enqueueWork(this, new Intent());
                 break;
             case TYPE_WIFI:
                 if (isStart) {
@@ -236,78 +235,72 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         }
                     }
                 }
-                serviceClass = WifiService.class;
+                WifiService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_ACCELEROMETER:
-                serviceClass = AccelerometerService.class;
+                AccelerometerService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_AMBIENT_TEMPERATURE:
-                serviceClass = AmbientTemperatureService.class;
+                AmbientTemperatureService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_GAME_ROTATION_VECTOR:
-                serviceClass = GameRotationVectorService.class;
+                GameRotationVectorService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR:
-                serviceClass = GeoMagneticRotationVectorService.class;
+                GeoMagneticRotationVectorService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_GRAVITY:
-                serviceClass = GravityService.class;
+                GravityService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_GYROSCOPE:
-                serviceClass = GyroscopeService.class;
+                GyroscopeService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_GYROSCOPE_UNCALIBRATED:
-                serviceClass = GyroscopeUncalibratedService.class;
+                GyroscopeUncalibratedService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_LIGHT:
-                serviceClass = LightService.class;
+                LightService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_LINEAR_ACCELERATION:
-                serviceClass = LinearAccelerationService.class;
+                LinearAccelerationService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
-                serviceClass = MagneticFieldService.class;
+                MagneticFieldService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
-                serviceClass = MagneticFieldUncalibratedService.class;
+                MagneticFieldUncalibratedService.enqueueWork(this, new Intent());
                 break;
+            //noinspection deprecation
             case Sensor.TYPE_ORIENTATION:
-                serviceClass = OrientationService.class;
+                OrientationService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_PRESSURE:
-                serviceClass = PressureService.class;
+                PressureService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_PROXIMITY:
-                serviceClass = ProximityService.class;
+                ProximityService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_RELATIVE_HUMIDITY:
-                serviceClass = RelativeHumidityService.class;
+                RelativeHumidityService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_ROTATION_VECTOR:
-                serviceClass = RotationVectorService.class;
+                RotationVectorService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_SIGNIFICANT_MOTION:
-                serviceClass = SignificantMotionService.class;
+                SignificantMotionService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_STEP_COUNTER:
-                serviceClass = StepCounterService.class;
+                StepCounterService.enqueueWork(this, new Intent());
                 break;
             case Sensor.TYPE_STEP_DETECTOR:
-                serviceClass = StepDetectorService.class;
+                StepDetectorService.enqueueWork(this, new Intent());
                 break;
+            //noinspection deprecation
             case Sensor.TYPE_TEMPERATURE:
-                serviceClass = TemperatureService.class;
+                TemperatureService.enqueueWork(this, new Intent());
                 break;
             default:
                 break;
-        }
-        if (serviceClass != null) {
-            Intent intent = new Intent(this, serviceClass);
-            if (isStart) {
-                startService(intent);
-            } else {
-                stopService(intent);
-            }
         }
         return true;
     }

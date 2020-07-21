@@ -1,15 +1,16 @@
 package cn.edu.heuet.sensormng.service;
 
-import java.util.Locale;
-
-import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.IBinder;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+
+import java.util.Locale;
 
 import cn.edu.heuet.sensormng.FileUtils;
 import cn.edu.heuet.sensormng.MyConstants;
@@ -17,8 +18,7 @@ import cn.edu.heuet.sensormng.MyConstants;
 /**
  * AbstractSensorService
  */
-public abstract class AbstractSensorService extends Service implements
-        SensorEventListener {
+public abstract class AbstractSensorService extends JobIntentService implements SensorEventListener {
 
     private String TAG = "";
     private int m_delay = MyConstants.SENSOR_DELAY;
@@ -37,15 +37,13 @@ public abstract class AbstractSensorService extends Service implements
         dirName = TAG.replace("Service", "");
         fileName = dirName.toLowerCase(Locale.getDefault());
         fileUtils = new FileUtils(dirName, fileName);
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(getSensorType());
-        mSensorManager.registerListener(this, mSensor, m_delay);
-
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+    protected void onHandleWork(@NonNull Intent intent) {
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(getSensorType());
+        mSensorManager.registerListener(this, mSensor, m_delay);
     }
 
     @Override
@@ -54,11 +52,6 @@ public abstract class AbstractSensorService extends Service implements
             mSensorManager.unregisterListener(this, mSensor);
         }
         super.onDestroy();
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     @Override

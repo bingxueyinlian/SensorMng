@@ -1,45 +1,54 @@
 package cn.edu.heuet.sensormng.service;
 
-import java.util.ArrayList;
-
 import android.Manifest;
-import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.JobIntentService;
 
+import java.util.ArrayList;
 
 import cn.edu.heuet.sensormng.FileUtils;
+import cn.edu.heuet.sensormng.MyConstants;
 import cn.edu.heuet.sensormng.StringUtils;
 
 /**
  * GPS
  */
-public class GPSService extends Service implements LocationListener {
+public class GPSService extends JobIntentService implements LocationListener {
     private final String TAG = "GPSService";
     private final String dirName = "GPS";
-    private String fileName = "gps";
+    private final String fileName = "gps";
     private FileUtils fileUtils = null;
     private LocationManager mLocationManager = null;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GPSService.class, MyConstants.JOB_ID_GPS, work);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         // minTime:30,minDistance:0
         String config = fileUtils.getConfigInfo("gps", "minTime,minDistance");
         String[] tempArr = config.split(",");
@@ -63,19 +72,6 @@ public class GPSService extends Service implements LocationListener {
 
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mLocationManager != null) {
-            mLocationManager.removeUpdates(this);
-        }
-    }
-
     private void UpdateLocation(Location location) {
         if (location != null) {
             ArrayList<String> dataList = new ArrayList<String>();
@@ -92,26 +88,10 @@ public class GPSService extends Service implements LocationListener {
             assert msg != null;
             Log.i(TAG, msg);
         }
-
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
         UpdateLocation(location);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-
     }
 }

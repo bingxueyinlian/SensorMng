@@ -1,14 +1,22 @@
 package cn.edu.heuet.sensormng.service;
 
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
+
+import cn.edu.heuet.sensormng.MyConstants;
 
 /**
  * LinearAcceleration
  */
 public class LinearAccelerationService extends AbstractSensorService {
 
-	@Override
-	int getSensorType() {
-		return Sensor.TYPE_LINEAR_ACCELERATION;
-	}
+    @Override
+    int getSensorType() {
+        return Sensor.TYPE_LINEAR_ACCELERATION;
+    }
+
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, LinearAccelerationService.class, MyConstants.JOB_ID_LINEARACCELERATION, work);
+    }
 }

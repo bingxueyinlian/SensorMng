@@ -11,6 +11,9 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,12 +22,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
+import cn.edu.heuet.sensormng.MyConstants;
 import cn.edu.heuet.sensormng.StringUtils;
 
 /**
  * Bluetooth
  */
-public class BluetoothService extends Service {
+public class BluetoothService extends JobIntentService {
     private String TAG = "BluetoothService";
     private final String dirName = "Bluetooth";
     private String fileName = "bluetooth";
@@ -35,16 +39,33 @@ public class BluetoothService extends Service {
     private String scanID = "";
     private ArrayList<String> arrDevices = null;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, BluetoothService.class, MyConstants.JOB_ID_BLUETOOTH, work);
     }
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         fileUtils = new FileUtils(dirName, fileName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+            mBluetoothAdapter = null;
+        }
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Register the BroadcastReceiver
@@ -84,26 +105,6 @@ public class BluetoothService extends Service {
                 }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter.cancelDiscovery();
-            mBluetoothAdapter = null;
-        }
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND

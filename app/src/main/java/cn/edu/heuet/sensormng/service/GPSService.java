@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -72,7 +73,7 @@ public class GPSService extends JobIntentService implements LocationListener {
         }
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 Integer.parseInt(minTime) * 1000,
-                Integer.parseInt(minDistance), this);
+                Integer.parseInt(minDistance), this, Looper.getMainLooper());
 
         //防止服务退出
         long count = 0;

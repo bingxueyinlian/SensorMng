@@ -14,7 +14,7 @@
       "versionCode": 1,
       "versionName": "1.2020.0722",
       "enabled": true,
-      "outputFile": "app-release.apk"
+      "outputFile": "SensorMng.apk"
     }
   ]
 }

@@ -21,7 +21,6 @@ import cn.edu.heuet.sensormng.ConstantUtils;
 public abstract class AbstractSensorService extends JobIntentService implements SensorEventListener {
 
     private String TAG = "";
-    private int m_delay = ConstantUtils.SENSOR_DELAY;
     private String dirName = "";
     private String fileName = "";
     private FileUtils fileUtils = null;
@@ -52,7 +51,7 @@ public abstract class AbstractSensorService extends JobIntentService implements 
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        mSensorManager.registerListener(this, mSensor, m_delay);
+        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
 
         //防止服务退出
         long count = 0;

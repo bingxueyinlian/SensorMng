@@ -113,4 +113,14 @@ public class GPSService extends JobIntentService implements LocationListener {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+        Log.i(TAG, "onProviderDisabled");
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        Log.i(TAG, "onProviderEnabled");
+    }
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * MagneticField
@@ -17,7 +17,7 @@ public class MagneticFieldService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, MagneticFieldService.class, MyConstants.JOB_ID_MAGNETICFIELD, work);
+        enqueueWork(context, MagneticFieldService.class, ConstantUtils.JOB_ID_MAGNETICFIELD, work);
     }
 
     @Override

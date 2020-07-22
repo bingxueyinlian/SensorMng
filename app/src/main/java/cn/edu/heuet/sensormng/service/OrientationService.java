@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Orientation
@@ -18,7 +18,7 @@ public class OrientationService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, OrientationService.class, MyConstants.JOB_ID_ORIENTATION, work);
+        enqueueWork(context, OrientationService.class, ConstantUtils.JOB_ID_ORIENTATION, work);
     }
 
     @Override

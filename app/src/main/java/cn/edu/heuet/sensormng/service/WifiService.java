@@ -20,7 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 import cn.edu.heuet.sensormng.StringUtils;
 
 public class WifiService extends JobIntentService {
@@ -38,7 +38,7 @@ public class WifiService extends JobIntentService {
     private String period;
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, WifiService.class, MyConstants.JOB_ID_WIFI, work);
+        enqueueWork(context, WifiService.class, ConstantUtils.JOB_ID_WIFI, work);
     }
 
     @Override

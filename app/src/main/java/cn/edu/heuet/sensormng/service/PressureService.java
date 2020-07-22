@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Pressure
@@ -17,7 +17,7 @@ public class PressureService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, PressureService.class, MyConstants.JOB_ID_PRESSURE, work);
+        enqueueWork(context, PressureService.class, ConstantUtils.JOB_ID_PRESSURE, work);
     }
 
     @Override

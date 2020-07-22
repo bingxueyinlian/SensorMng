@@ -17,7 +17,7 @@ import androidx.core.app.JobIntentService;
 import java.util.ArrayList;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 import cn.edu.heuet.sensormng.StringUtils;
 
 /**
@@ -33,7 +33,7 @@ public class GPSService extends JobIntentService implements LocationListener {
     private String minDistance;
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GPSService.class, MyConstants.JOB_ID_GPS, work);
+        enqueueWork(context, GPSService.class, ConstantUtils.JOB_ID_GPS, work);
     }
 
     @Override
@@ -71,9 +71,14 @@ public class GPSService extends JobIntentService implements LocationListener {
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+
+        Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        UpdateLocation(lastKnownLocation);
+        mLocationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
                 Integer.parseInt(minTime) * 1000,
-                Integer.parseInt(minDistance), this, Looper.getMainLooper());
+                Integer.parseInt(minDistance), this, Looper.getMainLooper()
+        );
 
         //防止服务退出
         long count = 0;

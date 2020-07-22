@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * StepDetector
@@ -17,7 +17,7 @@ public class StepDetectorService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, StepDetectorService.class, MyConstants.JOB_ID_STEPDETECTOR, work);
+        enqueueWork(context, StepDetectorService.class, ConstantUtils.JOB_ID_STEPDETECTOR, work);
     }
 
     @Override

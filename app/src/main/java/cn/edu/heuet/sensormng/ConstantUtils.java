@@ -1,6 +1,6 @@
 package cn.edu.heuet.sensormng;
 
-public class MyConstants {
+public class ConstantUtils {
     public static final int SENSOR_DELAY = 100 * 1000 * 1000;// 10s
 
     public static final int JOB_ID_GPS = 3000;

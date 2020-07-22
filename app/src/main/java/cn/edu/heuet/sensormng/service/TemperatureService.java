@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Temperature
@@ -18,7 +18,7 @@ public class TemperatureService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, TemperatureService.class, MyConstants.JOB_ID_TEMPERATURE, work);
+        enqueueWork(context, TemperatureService.class, ConstantUtils.JOB_ID_TEMPERATURE, work);
     }
 
     @Override

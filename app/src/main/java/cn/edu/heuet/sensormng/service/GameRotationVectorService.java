@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * GameRotationVector
@@ -17,7 +17,7 @@ public class GameRotationVectorService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GameRotationVectorService.class, MyConstants.JOB_ID_GAMEROTATIONVECTOR, work);
+        enqueueWork(context, GameRotationVectorService.class, ConstantUtils.JOB_ID_GAMEROTATIONVECTOR, work);
     }
 
     @Override

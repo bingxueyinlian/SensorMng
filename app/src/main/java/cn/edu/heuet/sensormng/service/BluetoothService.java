@@ -1,6 +1,5 @@
 package cn.edu.heuet.sensormng.service;
 
-import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
@@ -8,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,7 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 import cn.edu.heuet.sensormng.StringUtils;
 
 /**
@@ -42,7 +40,7 @@ public class BluetoothService extends JobIntentService {
     private String period;
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, BluetoothService.class, MyConstants.JOB_ID_BLUETOOTH, work);
+        enqueueWork(context, BluetoothService.class, ConstantUtils.JOB_ID_BLUETOOTH, work);
     }
 
 

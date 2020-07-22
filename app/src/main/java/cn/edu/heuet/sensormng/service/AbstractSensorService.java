@@ -13,7 +13,7 @@ import androidx.core.app.JobIntentService;
 import java.util.Locale;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * AbstractSensorService
@@ -21,7 +21,7 @@ import cn.edu.heuet.sensormng.MyConstants;
 public abstract class AbstractSensorService extends JobIntentService implements SensorEventListener {
 
     private String TAG = "";
-    private int m_delay = MyConstants.SENSOR_DELAY;
+    private int m_delay = ConstantUtils.SENSOR_DELAY;
     private String dirName = "";
     private String fileName = "";
     private FileUtils fileUtils = null;

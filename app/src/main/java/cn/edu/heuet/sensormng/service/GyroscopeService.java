@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Gyroscope
@@ -17,7 +17,7 @@ public class GyroscopeService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GyroscopeService.class, MyConstants.JOB_ID_GYROSCOPE, work);
+        enqueueWork(context, GyroscopeService.class, ConstantUtils.JOB_ID_GYROSCOPE, work);
     }
 
     @Override

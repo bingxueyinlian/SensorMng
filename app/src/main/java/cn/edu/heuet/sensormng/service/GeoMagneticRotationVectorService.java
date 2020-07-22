@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * GeoMagneticRotationVector
@@ -17,7 +17,7 @@ public class GeoMagneticRotationVectorService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GeoMagneticRotationVectorService.class, MyConstants.JOB_ID_GEOMAGNETICROTATIONVECTOR, work);
+        enqueueWork(context, GeoMagneticRotationVectorService.class, ConstantUtils.JOB_ID_GEOMAGNETICROTATIONVECTOR, work);
     }
 
     @Override

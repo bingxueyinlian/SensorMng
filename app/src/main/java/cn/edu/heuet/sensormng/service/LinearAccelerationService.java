@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * LinearAcceleration
@@ -17,7 +17,7 @@ public class LinearAccelerationService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, LinearAccelerationService.class, MyConstants.JOB_ID_LINEARACCELERATION, work);
+        enqueueWork(context, LinearAccelerationService.class, ConstantUtils.JOB_ID_LINEARACCELERATION, work);
     }
 
     @Override

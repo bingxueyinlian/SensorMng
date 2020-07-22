@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Gravity
@@ -17,7 +17,7 @@ public class GravityService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GravityService.class, MyConstants.JOB_ID_GRAVITY, work);
+        enqueueWork(context, GravityService.class, ConstantUtils.JOB_ID_GRAVITY, work);
     }
 
     @Override

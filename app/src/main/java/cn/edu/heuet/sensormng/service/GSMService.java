@@ -19,7 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * GSM
@@ -37,7 +37,7 @@ public class GSMService extends JobIntentService {
     private String period;
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GSMService.class, MyConstants.JOB_ID_GSM, work);
+        enqueueWork(context, GSMService.class, ConstantUtils.JOB_ID_GSM, work);
     }
 
     @Override

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * RelativeHumidity
@@ -17,7 +17,7 @@ public class RelativeHumidityService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, RelativeHumidityService.class, MyConstants.JOB_ID_RELATIVEHUMIDITY, work);
+        enqueueWork(context, RelativeHumidityService.class, ConstantUtils.JOB_ID_RELATIVEHUMIDITY, work);
     }
 
     @Override

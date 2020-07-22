@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * Accelerometer
@@ -17,7 +17,7 @@ public class AccelerometerService extends AbstractSensorService {
 	}
 
 	public static void enqueueWork(Context context, Intent work) {
-		enqueueWork(context, AccelerometerService.class, MyConstants.JOB_ID_ACCELEROMETER, work);
+		enqueueWork(context, AccelerometerService.class, ConstantUtils.JOB_ID_ACCELEROMETER, work);
 	}
 
 	@Override

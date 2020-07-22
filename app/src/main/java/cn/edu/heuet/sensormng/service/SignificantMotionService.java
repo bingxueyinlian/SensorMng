@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 
-import cn.edu.heuet.sensormng.MyConstants;
+import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * SignificantMotion
@@ -17,7 +17,7 @@ public class SignificantMotionService extends AbstractSensorService {
     }
 
     public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, SignificantMotionService.class, MyConstants.JOB_ID_SIGNIFICANTMOTION, work);
+        enqueueWork(context, SignificantMotionService.class, ConstantUtils.JOB_ID_SIGNIFICANTMOTION, work);
     }
 
     @Override

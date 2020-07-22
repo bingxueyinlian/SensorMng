@@ -32,7 +32,9 @@ public class GSMService extends JobIntentService {
     private TelephonyManager telMng = null;
     private Timer timer = null;
     private int lastSignal = 0;
-    private long count = 0;
+    private MyPhoneStateListener mPhoneStateListener;
+    private String delay;
+    private String period;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, GSMService.class, MyConstants.JOB_ID_GSM, work);
@@ -43,42 +45,54 @@ public class GSMService extends JobIntentService {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
         telMng = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        telMng.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-    }
+        mPhoneStateListener = new MyPhoneStateListener();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         // delay:1,period:5
         String config = fileUtils.getConfigInfo("gsm", "delay,period");
         String[] tempArr = config.split(",");
-        String delay = tempArr[0];
-        String period = tempArr[1];
+        delay = tempArr[0];
+        period = tempArr[1];
         if (delay == null || delay.length() == 0) {
             delay = "1";
         }
         if (period == null || period.length() == 0) {
             period = "5";
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        telMng.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        telMng.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                getLocationData();
+                try {
+                    getLocationData();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
 
-        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+        //防止服务退出
+        long count = 0;
+        while (count < Long.MAX_VALUE - 1) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
                 count++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -87,9 +101,9 @@ public class GSMService extends JobIntentService {
     }
 
     private void getLocationData() {
-        // MCC，Mobile Country Code，移动国家代码（中国的为460）；
-        // MNC，Mobile Network Code，移动网络号码（中国移动为00，中国联通为01）；
-        // LAC，Location Area Code，位置区域码；
+        // MCC，Mobile Country Code，移动国家代码（中国的为460）
+        // MNC，Mobile Network Code，移动网络号码（中国移动为00，中国联通为01）
+        // LAC，Location Area Code，位置区域码
         // CID，Cell Identity，基站编号，是个16位的数据（范围是0到65535）
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;

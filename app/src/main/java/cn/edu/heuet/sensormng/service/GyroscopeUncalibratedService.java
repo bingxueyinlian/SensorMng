@@ -11,12 +11,19 @@ import cn.edu.heuet.sensormng.MyConstants;
  */
 public class GyroscopeUncalibratedService extends AbstractSensorService {
 
-	@Override
-	int getSensorType() {
-		return Sensor.TYPE_GYROSCOPE_UNCALIBRATED;
-	}
+    @Override
+    int getSensorType() {
+        return Sensor.TYPE_GYROSCOPE_UNCALIBRATED;
+    }
 
-	public static void enqueueWork(Context context, Intent work) {
-		enqueueWork(context, GyroscopeUncalibratedService.class, MyConstants.JOB_ID_GYROSCOPEUNCALIBRATED, work);
-	}
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GyroscopeUncalibratedService.class, MyConstants.JOB_ID_GYROSCOPEUNCALIBRATED, work);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

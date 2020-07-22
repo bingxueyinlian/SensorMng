@@ -19,4 +19,11 @@ public class MagneticFieldUncalibratedService extends AbstractSensorService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, MagneticFieldUncalibratedService.class, MyConstants.JOB_ID_MAGNETICFIELDUNCALIBRATED, work);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

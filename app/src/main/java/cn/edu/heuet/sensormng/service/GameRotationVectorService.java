@@ -11,12 +11,19 @@ import cn.edu.heuet.sensormng.MyConstants;
  */
 public class GameRotationVectorService extends AbstractSensorService {
 
-	@Override
-	int getSensorType() {
-		return Sensor.TYPE_GAME_ROTATION_VECTOR;
-	}
+    @Override
+    int getSensorType() {
+        return Sensor.TYPE_GAME_ROTATION_VECTOR;
+    }
 
-	public static void enqueueWork(Context context, Intent work) {
-		enqueueWork(context, GameRotationVectorService.class, MyConstants.JOB_ID_GAMEROTATIONVECTOR, work);
-	}
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GameRotationVectorService.class, MyConstants.JOB_ID_GAMEROTATIONVECTOR, work);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

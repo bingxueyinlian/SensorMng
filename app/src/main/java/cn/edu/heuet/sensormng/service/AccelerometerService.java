@@ -19,4 +19,11 @@ public class AccelerometerService extends AbstractSensorService {
 	public static void enqueueWork(Context context, Intent work) {
 		enqueueWork(context, AccelerometerService.class, MyConstants.JOB_ID_ACCELEROMETER, work);
 	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		//重新启动
+		enqueueWork(this, new Intent());
+	}
 }

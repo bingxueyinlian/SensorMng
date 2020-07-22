@@ -19,4 +19,11 @@ public class StepCounterService extends AbstractSensorService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, StepCounterService.class, MyConstants.JOB_ID_STEPCOUNTER, work);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

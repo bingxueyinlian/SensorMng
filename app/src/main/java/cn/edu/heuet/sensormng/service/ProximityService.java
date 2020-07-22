@@ -19,4 +19,11 @@ public class ProximityService extends AbstractSensorService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, ProximityService.class, MyConstants.JOB_ID_PROXIMITY, work);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

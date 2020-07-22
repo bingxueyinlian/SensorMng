@@ -11,12 +11,19 @@ import cn.edu.heuet.sensormng.MyConstants;
  */
 public class GeoMagneticRotationVectorService extends AbstractSensorService {
 
-	@Override
-	int getSensorType() {
-		return Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR;
-	}
+    @Override
+    int getSensorType() {
+        return Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR;
+    }
 
-	public static void enqueueWork(Context context, Intent work) {
-		enqueueWork(context, GeoMagneticRotationVectorService.class, MyConstants.JOB_ID_GEOMAGNETICROTATIONVECTOR, work);
-	}
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GeoMagneticRotationVectorService.class, MyConstants.JOB_ID_GEOMAGNETICROTATIONVECTOR, work);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

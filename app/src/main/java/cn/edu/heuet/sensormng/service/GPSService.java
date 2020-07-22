@@ -28,7 +28,8 @@ public class GPSService extends JobIntentService implements LocationListener {
     private final String fileName = "gps";
     private FileUtils fileUtils = null;
     private LocationManager mLocationManager = null;
-    private long count = 0;
+    private String minTime;
+    private String minDistance;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, GPSService.class, MyConstants.JOB_ID_GPS, work);
@@ -38,19 +39,33 @@ public class GPSService extends JobIntentService implements LocationListener {
     public void onCreate() {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         // minTime:30,minDistance:0
         String config = fileUtils.getConfigInfo("gps", "minTime,minDistance");
         String[] tempArr = config.split(",");
-        String minTime = tempArr[0];
-        String minDistance = tempArr[1];
+        minTime = tempArr[0];
+        minDistance = tempArr[1];
         if (minTime == null || minTime.length() == 0) {
             minTime = "30";
         }
         if (minDistance == null || minDistance.length() == 0) {
             minDistance = "0";
         }
+    }
 
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    @Override
+    public void onDestroy() {
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(this);
+        }
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -58,21 +73,12 @@ public class GPSService extends JobIntentService implements LocationListener {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 Integer.parseInt(minTime) * 1000,
                 Integer.parseInt(minDistance), this);
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mLocationManager != null) {
-            mLocationManager.removeUpdates(this);
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
-        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+        //防止服务退出
+        long count = 0;
+        while (count < Long.MAX_VALUE - 1) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
                 count++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -100,6 +106,10 @@ public class GPSService extends JobIntentService implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        UpdateLocation(location);
+        try {
+            UpdateLocation(location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

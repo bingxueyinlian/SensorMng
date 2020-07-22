@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "cn.edu.heuet.sensormng"
         minSdkVersion 19
-        targetSdkVersion 28 //安装10无法对wifi进行开关
+        targetSdkVersion 28 //安卓10无法对wifi进行开关
         versionCode 1
-        versionName "1.2020.0721"
+        versionName "1.2020.0722"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

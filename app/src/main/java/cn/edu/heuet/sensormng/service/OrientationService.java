@@ -20,4 +20,11 @@ public class OrientationService extends AbstractSensorService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, OrientationService.class, MyConstants.JOB_ID_ORIENTATION, work);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

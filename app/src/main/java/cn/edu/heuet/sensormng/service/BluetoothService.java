@@ -38,7 +38,8 @@ public class BluetoothService extends JobIntentService {
     private int cnt = 0;
     private String scanID = "";
     private ArrayList<String> arrDevices = null;
-    private long count = 0;
+    private String delay;
+    private String period;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, BluetoothService.class, MyConstants.JOB_ID_BLUETOOTH, work);
@@ -50,19 +51,21 @@ public class BluetoothService extends JobIntentService {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(mReceiver, filter);
+        // delay:1,period:30
+        String config = fileUtils.getConfigInfo("bluetooth", "delay,period");
+        String[] tempArr = config.split(",");
+        delay = tempArr[0];
+        period = tempArr[1];
+        if (delay == null || delay.length() == 0) {
+            delay = "1";
+        }
+        if (period == null || period.length() == 0) {
+            period = "30";
+        }
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (mBluetoothAdapter != null) {
             mBluetoothAdapter.cancelDiscovery();
             mBluetoothAdapter = null;
@@ -72,43 +75,49 @@ public class BluetoothService extends JobIntentService {
             timer.cancel();
             timer = null;
         }
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        // delay:1,period:30
-        String config = fileUtils.getConfigInfo("bluetooth", "delay,period");
-        String[] tempArr = config.split(",");
-        String delay = tempArr[0];
-        String period = tempArr[1];
-        if (delay == null || delay.length() == 0) {
-            delay = "1";
-        }
-        if (period == null || period.length() == 0) {
-            period = "30";
-        }
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        // Register the BroadcastReceiver
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver, filter);
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (!mBluetoothAdapter.isDiscovering()) {
-                    cnt++;
-                    String cntStr = String.format(Locale.getDefault(), "%04d",
-                            cnt);
-                    String time = new SimpleDateFormat("yyyyMMddHHmmss", Locale
-                            .getDefault()).format(new Date());
-                    scanID = time + cntStr;
-                    Log.i(TAG, scanID);
-                    mBluetoothAdapter.startDiscovery();
-                } else {
-                    Log.i(TAG, "before scan is running");
+                try {
+                    if (mBluetoothAdapter == null) return;
+                    if (!mBluetoothAdapter.isDiscovering()) {
+                        cnt++;
+                        String cntStr = String.format(Locale.getDefault(), "%04d",
+                                cnt);
+                        String time = new SimpleDateFormat("yyyyMMddHHmmss", Locale
+                                .getDefault()).format(new Date());
+                        scanID = time + cntStr;
+                        Log.i(TAG, scanID);
+                        mBluetoothAdapter.startDiscovery();
+                    } else {
+                        Log.i(TAG, "before scan is running");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
 
+        long count = 0;
         while (count < Long.MAX_VALUE - 1) {//防止服务退出
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
                 count++;
             } catch (InterruptedException e) {
                 e.printStackTrace();

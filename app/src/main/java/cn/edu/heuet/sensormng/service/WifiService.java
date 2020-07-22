@@ -33,7 +33,9 @@ public class WifiService extends JobIntentService {
     private int cnt = 0;
     private String scanID = "";
     private List<String> scanedList = null;
-    private long count = 0;
+    private IntentFilter filter;
+    private String delay;
+    private String period;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, WifiService.class, MyConstants.JOB_ID_WIFI, work);
@@ -44,55 +46,68 @@ public class WifiService extends JobIntentService {
         super.onCreate();
         fileUtils = new FileUtils(dirName, fileName);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
-        IntentFilter filter = new IntentFilter(
-                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        registerReceiver(mReceiver, filter);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    @Override
-    protected void onHandleWork(@NonNull Intent intent) {
         // delay:1,period:30
         String config = fileUtils.getConfigInfo("wifi", "delay,period");
         String[] tempArr = config.split(",");
-        String delay = tempArr[0];
-        String period = tempArr[1];
+        delay = tempArr[0];
+        period = tempArr[1];
         if (delay == null || delay.length() == 0) {
             delay = "1";
         }
         if (period == null || period.length() == 0) {
             period = "30";
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(mReceiver);
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        registerReceiver(mReceiver, filter);
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                cnt++;
-                String cntStr = String.format(Locale.getDefault(), "%04d", cnt);
-                String time = new SimpleDateFormat("yyyyMMddHHmmss", Locale
-                        .getDefault()).format(new Date());
-                scanID = time + cntStr;
-                Log.i(TAG, scanID);
-                if (!wifiManager.isWifiEnabled())
-                    wifiManager.setWifiEnabled(true);
-                scanedList = new ArrayList<String>();
-                wifiManager.startScan();
+                try {
+                    cnt++;
+                    String cntStr = String.format(Locale.getDefault(), "%04d", cnt);
+                    String time = new SimpleDateFormat("yyyyMMddHHmmss", Locale
+                            .getDefault()).format(new Date());
+                    scanID = time + cntStr;
+                    Log.i(TAG, scanID);
+                    if (!wifiManager.isWifiEnabled())
+                        wifiManager.setWifiEnabled(true);
+                    scanedList = new ArrayList<String>();
+                    boolean success = wifiManager.startScan();
+                    if (success) {
+                        Log.i(TAG, "扫描成功");
+                    } else {
+                        Log.i(TAG, "扫描失败");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }, Integer.parseInt(delay) * 1000, Integer.parseInt(period) * 1000);
 
-        while (count < Long.MAX_VALUE - 1) {//防止服务退出
+        //防止服务退出
+        long count = 0;
+        while (count < Long.MAX_VALUE - 1) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
                 count++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -113,7 +128,6 @@ public class WifiService extends JobIntentService {
                             Locale.getDefault()).format(new Date());
                     StringBuilder sbResult = new StringBuilder();
                     for (ScanResult sr : resultList) {
-
                         boolean isExist = checkExist(sr.BSSID);
                         if (isExist) {
                             continue;

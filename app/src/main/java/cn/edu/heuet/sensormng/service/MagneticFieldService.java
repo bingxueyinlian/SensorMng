@@ -19,4 +19,11 @@ public class MagneticFieldService extends AbstractSensorService {
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, MagneticFieldService.class, MyConstants.JOB_ID_MAGNETICFIELD, work);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //重新启动
+        enqueueWork(this, new Intent());
+    }
 }

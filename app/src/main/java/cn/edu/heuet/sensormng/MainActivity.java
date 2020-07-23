@@ -14,6 +14,7 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private final int TYPE_GSM = 200;
     private final int TYPE_BLUETOOTH = 300;
     private final int TYPE_WIFI = 400;
+    private PowerManager.WakeLock mWakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,23 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         FillListView();
         setServiceRunningStatus();
         listView.setAdapter(myAdapter);
+
+        acquireWakeLock();
+    }
+
+    public void acquireWakeLock() {
+        final PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        releaseWakeLock();
+        //Acquire new wake lock
+        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mytag:PARTIAL_WAKE_LOCK");
+        mWakeLock.acquire(24 * 60 * 60 * 1000L);
+    }
+
+    public void releaseWakeLock() {
+        if (mWakeLock != null && mWakeLock.isHeld()) {
+            mWakeLock.release();
+            mWakeLock = null;
+        }
     }
 
     @Override

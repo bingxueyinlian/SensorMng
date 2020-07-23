@@ -13,7 +13,6 @@ import androidx.core.app.JobIntentService;
 import java.util.Locale;
 
 import cn.edu.heuet.sensormng.FileUtils;
-import cn.edu.heuet.sensormng.ConstantUtils;
 
 /**
  * AbstractSensorService
@@ -44,23 +43,28 @@ public abstract class AbstractSensorService extends JobIntentService implements 
     @Override
     public void onDestroy() {
         if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this, mSensor);
+            mSensorManager.unregisterListener(this);
         }
         super.onDestroy();
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
-
+        boolean success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
+        Log.i(TAG, "onHandleWork-registerListener：" + success);
         //防止服务退出
-        long count = 0;
-        while (count < Long.MAX_VALUE - 1) {
-            try {
-                Thread.sleep(10000);
-                count++;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        synchronized (this) {
+            long count = 0;
+            while (count < Long.MAX_VALUE - 1) {
+                try {
+                    Thread.sleep(10000);
+                    count++;
+                    mSensorManager.unregisterListener(this);
+                    success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
+                    Log.i(TAG, "while-registerListener：" + success);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         final PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         releaseWakeLock();
         //Acquire new wake lock
-        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mytag:PARTIAL_WAKE_LOCK");
+        //mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mytag:PARTIAL_WAKE_LOCK");
+        mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "mytag:SCREEN_DIM_WAKE_LOCK");//保持屏幕高亮,可变暗
         mWakeLock.acquire(24 * 60 * 60 * 1000L);
     }
 

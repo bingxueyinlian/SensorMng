@@ -50,7 +50,7 @@ public abstract class AbstractSensorService extends JobIntentService implements 
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        boolean success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
+        boolean success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_NORMAL);
         Log.i(TAG, "onHandleWork-registerListener：" + success);
         //防止服务退出
         synchronized (this) {
@@ -60,7 +60,7 @@ public abstract class AbstractSensorService extends JobIntentService implements 
                     Thread.sleep(10000);
                     count++;
                     mSensorManager.unregisterListener(this);
-                    success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_DELAY_UI);
+                    success = mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL, SensorManager.SENSOR_DELAY_NORMAL);
                     Log.i(TAG, "while-registerListener：" + success);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
